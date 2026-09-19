@@ -1,4 +1,3 @@
- 
 # ---------------------------------------------------
 # File Name: shrink.py
 # Description: A Pyrogram bot for downloading files from Telegram channels or groups 
@@ -66,28 +65,44 @@ async def is_user_verified(user_id):
 @app.on_message(filters.command("start"))
 async def token_handler(client, message):
     """Handle the /token command."""
+    
+    # Auto-reaction on start message
+    try:
+        await client.send_reaction(chat_id=message.chat.id, message_id=message.id, emoji="🥰")
+    except:
+        pass
+
     join = await subscribe(client, message)
     if join == 1:
         return
-    chat_id = "save_restricted_content_bots"
-    msg = await app.get_messages(chat_id, 796)
+    
     user_id = message.chat.id
+    first_name = message.from_user.first_name if message.from_user else "User"
+
     if len(message.command) <= 1:
-        image_url = "https://i.postimg.cc/v8q8kGyz/startimg-1.jpg"
-        join_button = InlineKeyboardButton("Join Channel", url="https://t.me/team_spy_pro")
-        premium = InlineKeyboardButton("Get Premium", url="https://t.me/kingofpatal")   
+        # LDKI WALI IMAGE (Updated as per your link)
+        image_url = "https://files.catbox.moe/fros5e.jpg" 
+        
         keyboard = InlineKeyboardMarkup([
-            [join_button],   
-            [premium]    
+            [
+                InlineKeyboardButton("DEVELOPER 👨‍💻", url="https://t.me/itzishan"), 
+                InlineKeyboardButton("UPDATES 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
+            ],
+            [
+                InlineKeyboardButton("Help", callback_data="help"), 
+                InlineKeyboardButton("ABOUT ME 😎", callback_data="about") 
+            ]
         ])
          
+        caption = (
+            f"> _Yoo {first_name} !! !! Welcome Aboard 🥂_\n>\n"
+            "> _I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎)_\n>\n"
+            "> _For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑_"
+        )
+         
         await message.reply_photo(
-            msg.photo.file_id,
-            caption=(
-                "Hi 👋 Welcome, Wanna intro...?\n\n"
-                "✳️ I can save posts from channels or groups where forwarding is off. I can download videos/audio from YT, INSTA, ... social platforms\n"
-                "✳️ Simply send the post link of a public channel. For private channels, do /login. Send /help to know more."
-            ),
+            photo=image_url,
+            caption=caption,
             reply_markup=keyboard
         )
         return  
@@ -144,4 +159,4 @@ async def smart_handler(client, message):
             [[InlineKeyboardButton("Verify the token now...", url=shortened_url)]]
         )
         await message.reply("Click the button below to verify your free access token: \n\n> What will you get ? \n1. No time bound upto 3 hours \n2. Batch command limit will be FreeLimit + 20 \n3. All functions unlocked", reply_markup=button)
- 
+     
