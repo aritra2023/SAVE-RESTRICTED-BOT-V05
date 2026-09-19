@@ -1,14 +1,32 @@
-FROM python:3.10.4-slim
-RUN apt update && apt upgrade -y
-RUN apt-get install git curl python3-pip ffmpeg -y
-RUN apt-get -y install git
-RUN apt-get install -y wget python3-pip curl bash neofetch ffmpeg software-properties-common
+# Changed to 3.10-slim to fix the 404 apt errors
+FROM python:3.10-slim
+
+# Set working directory first
+WORKDIR /app
+
+# Combined all apt commands to fix duplicate installs, save space, and clear cache
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    wget \
+    ffmpeg \
+    neofetch \
+    software-properties-common && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first to leverage Docker caching
 COPY requirements.txt .
 
-RUN pip3 install wheel
-RUN pip3 install --no-cache-dir -U -r requirements.txt
-WORKDIR /app
+# Install Python dependencies
+RUN pip3 install --no-cache-dir wheel && \
+    pip3 install --no-cache-dir -U -r requirements.txt
+
+# Copy the rest of the code
 COPY . .
+
 EXPOSE 8000
 
 CMD flask run -h 0.0.0.0 -p 8000 & python3 -m devgagan
+
