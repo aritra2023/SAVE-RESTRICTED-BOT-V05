@@ -83,7 +83,7 @@ async def token_handler(client, message):
         sticker_id = "CAACAgQAAxkBAAER7RBqsFFqPO_VzQy0HKNQ9nJpl_VWcAACTBYAAtURSVGPuDSsezeyDz0E"
         try:
             sticker_msg = await client.send_sticker(chat_id=user_id, sticker=sticker_id)
-            await asyncio.sleep(2.5) 
+            await asyncio.sleep(1.3) # Updated to 1.3 seconds
             await sticker_msg.delete()
         except Exception:
             pass 
@@ -191,4 +191,3 @@ async def smart_handler(client, message):
             [[InlineKeyboardButton("Verify the token now...", url=shortened_url)]]
         )
         await message.reply("Click the button below to verify your free access token: \n\n> What will you get ? \n1. No time bound upto 3 hours \n2. Batch command limit will be FreeLimit + 20 \n3. All functions unlocked", reply_markup=button)
-     
