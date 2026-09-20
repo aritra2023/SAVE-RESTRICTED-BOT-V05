@@ -13,7 +13,7 @@
 # ---------------------------------------------------
 
 import math
-import time , re
+import time, re
 from pyrogram import enums
 from config import CHANNEL_ID, OWNER_ID 
 from devgagan.core.mongo.plans_db import premium_users
@@ -21,20 +21,27 @@ from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import cv2
 from pyrogram.errors import FloodWait, InviteHashInvalid, InviteHashExpired, UserAlreadyParticipant, UserNotParticipant
 from datetime import datetime as dt
-import asyncio, subprocess, re, os, time
+import asyncio, subprocess, os
+
 async def chk_user(message, user_id):
     user = await premium_users()
     if user_id in user or user_id in OWNER_ID:
         return 0
     else:
         return 1
+
 async def gen_link(app,chat_id):
    link = await app.export_chat_invite_link(chat_id)
    return link
 
 async def subscribe(app, message):
    update_channel = CHANNEL_ID
+   # Link generation function ko waise hi rakha hai background ke liye
    url = await gen_link(app, update_channel)
+   
+   # Naye 2 buttons aur dono me tera diya hua fix link
+   force_link = "https://t.me/+BUF3hu-cKn00Y2Q1"
+   
    if update_channel:
       try:
          user = await app.get_chat_member(update_channel, message.from_user.id)
@@ -43,11 +50,20 @@ async def subscribe(app, message):
             return 1
       except UserNotParticipant:
         caption = f"Join our channel to use the bot"
-        await message.reply_photo(photo="https://graph.org/file/d44f024a08ded19452152.jpg",caption=caption, reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Now...", url=f"{url}")]]))
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("Join Channel 1", url=force_link)],
+            [InlineKeyboardButton("Join Channel 2", url=force_link)]
+        ])
+        await message.reply_photo(
+            photo="https://graph.org/file/d44f024a08ded19452152.jpg",
+            caption=caption, 
+            reply_markup=keyboard
+        )
         return 1
       except Exception:
          await message.reply_text("Something Went Wrong. Contact us @devgaganin...")
          return 1
+
 async def get_seconds(time_string):
     def extract_value_and_unit(ts):
         value = ""
@@ -81,43 +97,41 @@ async def get_seconds(time_string):
         return value * 86400 * 365
     else:
         return 0
-PROGRESS_BAR = """\n
-│ **__Completed:__** {1}/{2}
-│ **__Bytes:__** {0}%
-│ **__Speed:__** {3}/s
-│ **__ETA:__** {4}
-╰─────────────────────╯
-"""
-async def progress_bar(current, total, ud_type, message, start):
 
+
+async def progress_bar(current, total, ud_type, message, start):
     now = time.time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
-
         percentage = current * 100 / total
-        speed = current / diff
+        speed = current / diff if diff > 0 else 0
         elapsed_time = round(diff) * 1000
-        time_to_completion = round((total - current) / speed) * 1000
+        time_to_completion = round((total - current) / speed) * 1000 if speed > 0 else 0
         estimated_total_time = elapsed_time + time_to_completion
 
         elapsed_time = TimeFormatter(milliseconds=elapsed_time)
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
         progress = "{0}{1}".format(
-            ''.join(["♦" for i in range(math.floor(percentage / 10))]),
-            ''.join(["◇" for i in range(10 - math.floor(percentage / 10))]))
+            ''.join(["■" for i in range(math.floor(percentage / 10))]),
+            ''.join(["□" for i in range(10 - math.floor(percentage / 10))]))
 
-        tmp = progress + PROGRESS_BAR.format( 
-            round(percentage, 2),
-            humanbytes(current),
-            humanbytes(total),
-            humanbytes(speed),
-
-            estimated_total_time if estimated_total_time != '' else "0 s"
+        # Pura design exactly tere format me banaya hai bina kisi extra lines ke
+        tmp = (
+            f"╭───────────⌬\n"
+            f"┟─[[  📥 {ud_type} Now ...  ]]\n"
+            f"├────────⌬\n"
+            f"┟ [[{progress}]](https://t.me/itzishan)\n"
+            f"┟ Completed: {humanbytes(current)}/{humanbytes(total)}\n"
+            f"┟ Bytes: {round(percentage, 2)}%\n"
+            f"┟ Speed: {humanbytes(speed)}/s\n"
+            f"┖ ETA: {estimated_total_time if estimated_total_time != '' else '0 s'}"
         )
         try:
             await message.edit(
-                text="{}\n│ {}".format(ud_type, tmp),)             
+                text=tmp,
+                disable_web_page_preview=True
+            )             
         except:
             pass
 
@@ -143,6 +157,7 @@ def TimeFormatter(milliseconds: int) -> str:
         ((str(seconds) + "s, ") if seconds else "") + \
         ((str(milliseconds) + "ms, ") if milliseconds else "")
     return tmp[:-2] 
+
 def convert(seconds):
     seconds = seconds % (24 * 3600)
     hour = seconds // 3600
@@ -150,6 +165,7 @@ def convert(seconds):
     minutes = seconds // 60
     seconds %= 60      
     return "%d:%02d:%02d" % (hour, minutes, seconds)
+
 async def userbot_join(userbot, invite_link):
     try:
         await userbot.join_chat(invite_link)
@@ -163,6 +179,7 @@ async def userbot_join(userbot, invite_link):
     except Exception as e:
         print(e)
         return "Could not join, try joining manually."
+
 def get_link(string):
     regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
     url = re.findall(regex,string)   
@@ -174,6 +191,7 @@ def get_link(string):
             return False
     except Exception:
         return False
+
 def video_metadata(file):
     default_values = {'width': 1, 'height': 1, 'duration': 1}
     try:
@@ -230,6 +248,7 @@ async def screenshot(video, duration, sender):
         return out
     else:
         None  
+
 last_update_time = time.time()
 async def progress_callback(current, total, progress_message):
     percent = (current / total) * 100
@@ -239,51 +258,61 @@ async def progress_callback(current, total, progress_message):
     if current_time - last_update_time >= 10 or percent % 10 == 0:
         completed_blocks = int(percent // 10)
         remaining_blocks = 10 - completed_blocks
-        progress_bar = "♦" * completed_blocks + "◇" * remaining_blocks
+        progress = "■" * completed_blocks + "□" * remaining_blocks
+        
         current_mb = current / (1024 * 1024)  
         total_mb = total / (1024 * 1024)      
-        await progress_message.edit(
-    f"╭──────────────────╮\n"
-    f"│        **__Uploading...__**       \n"
-    f"├──────────\n"
-    f"│ {progress_bar}\n\n"
-    f"│ **__Progress:__** {percent:.2f}%\n"
-    f"│ **__Uploaded:__** {current_mb:.2f} MB / {total_mb:.2f} MB\n"
-    f"╰──────────────────╯\n\n"
-    f"**__Powered by Team SPY__**"
+        
+        tmp = (
+            f"╭───────────⌬\n"
+            f"┟─[[  📥 Uploading Now ...  ]]\n"
+            f"├────────⌬\n"
+            f"┟ [[{progress}]](https://t.me/itzishan)\n"
+            f"┟ Completed: {current_mb:.2f} MB/{total_mb:.2f} MB\n"
+            f"┟ Bytes: {percent:.2f}%\n"
+            f"┖ ETA: Calculating..."
         )
+        try:
+            await progress_message.edit(
+                text=tmp,
+                disable_web_page_preview=True
+            )
+            last_update_time = current_time
+        except:
+            pass
 
-        last_update_time = current_time
 async def prog_bar(current, total, ud_type, message, start):
-
     now = time.time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
-
         percentage = current * 100 / total
-        speed = current / diff
+        speed = current / diff if diff > 0 else 0
         elapsed_time = round(diff) * 1000
-        time_to_completion = round((total - current) / speed) * 1000
+        time_to_completion = round((total - current) / speed) * 1000 if speed > 0 else 0
         estimated_total_time = elapsed_time + time_to_completion
 
         elapsed_time = TimeFormatter(milliseconds=elapsed_time)
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
         progress = "{0}{1}".format(
-            ''.join(["♦" for i in range(math.floor(percentage / 10))]),
-            ''.join(["◇" for i in range(10 - math.floor(percentage / 10))]))
+            ''.join(["■" for i in range(math.floor(percentage / 10))]),
+            ''.join(["□" for i in range(10 - math.floor(percentage / 10))]))
 
-        tmp = progress + PROGRESS_BAR.format( 
-            round(percentage, 2),
-            humanbytes(current),
-            humanbytes(total),
-            humanbytes(speed),
-
-            estimated_total_time if estimated_total_time != '' else "0 s"
+        tmp = (
+            f"╭───────────⌬\n"
+            f"┟─[[  📥 {ud_type} Now ...  ]]\n"
+            f"├────────⌬\n"
+            f"┟ [[{progress}]](https://t.me/itzishan)\n"
+            f"┟ Completed: {humanbytes(current)}/{humanbytes(total)}\n"
+            f"┟ Bytes: {round(percentage, 2)}%\n"
+            f"┟ Speed: {humanbytes(speed)}/s\n"
+            f"┖ ETA: {estimated_total_time if estimated_total_time != '' else '0 s'}"
         )
         try:
             await message.edit_text(
-                text="{}\n│ {}".format(ud_type, tmp),)             
-
+                text=tmp,
+                disable_web_page_preview=True
+            )             
         except:
             pass
+    
