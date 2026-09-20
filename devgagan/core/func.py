@@ -36,10 +36,8 @@ async def gen_link(app,chat_id):
 
 async def subscribe(app, message):
    update_channel = CHANNEL_ID
-   # Link generation function ko waise hi rakha hai background ke liye
    url = await gen_link(app, update_channel)
    
-   # Naye 2 buttons aur dono me tera diya hua fix link
    force_link = "https://t.me/+BUF3hu-cKn00Y2Q1"
    
    if update_channel:
@@ -61,7 +59,7 @@ async def subscribe(app, message):
         )
         return 1
       except Exception:
-         await message.reply_text("Something Went Wrong. Contact us @devgaganin...")
+         await message.reply_text("Something Went Wrong. Check if Bot is Admin in CHANNEL_ID.")
          return 1
 
 async def get_seconds(time_string):
@@ -112,20 +110,26 @@ async def progress_bar(current, total, ud_type, message, start):
         elapsed_time = TimeFormatter(milliseconds=elapsed_time)
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
-        progress = "{0}{1}".format(
-            ''.join(["■" for i in range(math.floor(percentage / 10))]),
-            ''.join(["□" for i in range(10 - math.floor(percentage / 10))]))
+        completed_blocks = int(percentage // 10)
+        remaining_blocks = 10 - completed_blocks
+        progress = "■" * completed_blocks + "□" * remaining_blocks
 
-        # Pura design exactly tere format me banaya hai bina kisi extra lines ke
+        clean_ud_type = ud_type.split('\n')[0].strip() if '\n' in ud_type else ud_type.strip()
+        if "Down" in clean_ud_type or "down" in clean_ud_type:
+            clean_ud_type = "Downloading ..."
+        else:
+            clean_ud_type = "Uploading ..."
+
+        # Fixed Markdown for clickable progress bar
         tmp = (
             f"╭───────────⌬\n"
-            f"┟─[[  📥 {ud_type} Now ...  ]]\n"
+            f"┟─[[  📥 **{clean_ud_type}**  ]]\n"
             f"├────────⌬\n"
-            f"┟ [[{progress}]](https://t.me/itzishan)\n"
-            f"┟ Completed: {humanbytes(current)}/{humanbytes(total)}\n"
-            f"┟ Bytes: {round(percentage, 2)}%\n"
-            f"┟ Speed: {humanbytes(speed)}/s\n"
-            f"┖ ETA: {estimated_total_time if estimated_total_time != '' else '0 s'}"
+            f"┟ [{progress}](https://t.me/itzishan)\n"
+            f"┟ **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
+            f"┟ **Bytes:** __{round(percentage, 2)}%__\n"
+            f"┟ **Speed:** __{humanbytes(speed)}/s__\n"
+            f"┖ **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
         )
         try:
             await message.edit(
@@ -263,14 +267,15 @@ async def progress_callback(current, total, progress_message):
         current_mb = current / (1024 * 1024)  
         total_mb = total / (1024 * 1024)      
         
+        # Fixed Markdown for clickable progress bar
         tmp = (
-            f"╭───────────⌬\n"
-            f"┟─[[  📥 Uploading Now ...  ]]\n"
-            f"├────────⌬\n"
-            f"┟ [[{progress}]](https://t.me/itzishan)\n"
-            f"┟ Completed: {current_mb:.2f} MB/{total_mb:.2f} MB\n"
-            f"┟ Bytes: {percent:.2f}%\n"
-            f"┖ ETA: Calculating..."
+            f"╭───────────────────⌬\n"
+            f"┟─[[  📥 **Uploading ...**  ]]\n"
+            f"├──────────────⌬\n"
+            f"┟ [{progress}](https://t.me/itzishan)\n"
+            f"┟ **Completed:** __{current_mb:.2f} MB/{total_mb:.2f} MB__\n"
+            f"┟ **Bytes:** __{percent:.2f}%__\n"
+            f"┖ **ETA:** __Calculating...__"
         )
         try:
             await progress_message.edit(
@@ -294,19 +299,26 @@ async def prog_bar(current, total, ud_type, message, start):
         elapsed_time = TimeFormatter(milliseconds=elapsed_time)
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
-        progress = "{0}{1}".format(
-            ''.join(["■" for i in range(math.floor(percentage / 10))]),
-            ''.join(["□" for i in range(10 - math.floor(percentage / 10))]))
+        completed_blocks = int(percentage // 10)
+        remaining_blocks = 10 - completed_blocks
+        progress = "■" * completed_blocks + "□" * remaining_blocks
 
+        clean_ud_type = ud_type.split('\n')[0].strip() if '\n' in ud_type else ud_type.strip()
+        if "Down" in clean_ud_type or "down" in clean_ud_type:
+            clean_ud_type = "Downloading ..."
+        else:
+            clean_ud_type = "Uploading ..."
+
+        # Fixed Markdown for clickable progress bar
         tmp = (
-            f"╭───────────⌬\n"
-            f"┟─[[  📥 {ud_type} Now ...  ]]\n"
-            f"├────────⌬\n"
-            f"┟ [[{progress}]](https://t.me/itzishan)\n"
-            f"┟ Completed: {humanbytes(current)}/{humanbytes(total)}\n"
-            f"┟ Bytes: {round(percentage, 2)}%\n"
-            f"┟ Speed: {humanbytes(speed)}/s\n"
-            f"┖ ETA: {estimated_total_time if estimated_total_time != '' else '0 s'}"
+            f"╭─────────────────⌬\n"
+            f"┟─[[  📥 **{clean_ud_type}**  ]]\n"
+            f"├──────────────⌬\n"
+            f"┟ [{progress}](https://t.me/itzishan)\n"
+            f"┟ **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
+            f"┟ **Bytes:** __{round(percentage, 2)}%__\n"
+            f"┟ **Speed:** __{humanbytes(speed)}/s__\n"
+            f"┖ **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
         )
         try:
             await message.edit_text(
@@ -315,4 +327,3 @@ async def prog_bar(current, total, ud_type, message, start):
             )             
         except:
             pass
-    
