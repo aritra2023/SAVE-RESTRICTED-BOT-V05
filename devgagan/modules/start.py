@@ -223,7 +223,7 @@ async def plan(client, message):
 async def see_plan(client, callback_query):
     plan_text = (
         "> 💳 **__Premium Plan__**\n"
-        "__Our Plan Start from 2$ to 200₹ and can be accepted via Google Pay, PhonePe or PayPal. ( Terms & Conditions applied )__\n\n"
+        "__Our Plan Start from 4$ to 350₹ and can be accepted via Google Pay, PhonePe or PayPal. ( Terms & Conditions applied )__\n\n"
         "> 📥 **__Download Limit__**\n"
         "__Users can download up to 10,000 files in a single batch command.__\n\n"
         "> 📦 **__Batch Command__**\n"
