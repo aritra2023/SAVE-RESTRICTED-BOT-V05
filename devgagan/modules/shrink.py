@@ -95,8 +95,8 @@ async def token_handler(client, message):
          
         # HTML Formatting for exact screenshot matching (Bold + Italic + Mentions + Quotes)
         caption = (
-            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! !! Welcome Aboard ❞</i></b>\n\n"
-            f"<b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎) ❞</i></b>\n\n"
+            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! Welcome Aboard </blockquote></i></b>\n"
+            f"<blockquote><b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎) </i></b>\n\n"
             f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
         )
          
