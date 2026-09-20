@@ -14,6 +14,7 @@
 
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.enums import ParseMode
 import random
 import string
 import aiohttp
@@ -56,9 +57,15 @@ async def is_user_verified(user_id):
 async def token_handler(client, message):
     """Handle the /token command."""
     
-    # Auto-reaction BIG animation ke sath
+    # Random Auto-reaction BIG animation ke sath
+    emojis = ["🥰", "🥳", "🎉", "🔥", "👻", "🌚", "👀", "⚡", "🤧"]
     try:
-        await client.send_reaction(chat_id=message.chat.id, message_id=message.id, emoji="🥰", big=True)
+        await client.send_reaction(
+            chat_id=message.chat.id, 
+            message_id=message.id, 
+            emoji=random.choice(emojis), 
+            big=True
+        )
     except:
         pass
 
@@ -71,10 +78,10 @@ async def token_handler(client, message):
 
     if len(message.command) <= 1:
         
-        # NOTE: Jab image lagani ho, toh is 'image_url' ko uncomment kar dena aur link daal dena
+        # NOTE: Jab image lagani ho, toh is 'image_url' ko uncomment kar dena
         # image_url = "https://files.catbox.moe/fros5e.jpg" 
         
-        # Dark Plan Font for Buttons
+        # Dark Plan Font ONLY for Buttons
         keyboard = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
@@ -86,28 +93,30 @@ async def token_handler(client, message):
             ]
         ])
          
-        # Native Telegram Blockquote + Dark Plan Font
+        # HTML Formatting for exact screenshot matching (Bold + Italic + Mentions + Quotes)
         caption = (
-            f"> Yᴏᴏ {first_name} !! !! Wᴇʟᴄᴏᴍᴇ Aʙᴏᴀʀᴅ 🥂\n>\n"
-            f"> I Cᴀɴ Sᴀᴠᴇ Pᴏsᴛs Fʀᴏᴍ Cʜᴀɴɴᴇʟs ᴏʀ Gʀᴏᴜᴘs Eᴠᴇɴ Wʜᴇɴ Fᴏʀᴡᴀʀᴅɪɴɢ ɪs Dɪsᴀʙʟᴇᴅ (Yᴇᴘ, I'ᴍ Tʜᴀᴛ Pᴏᴡᴇʀғᴜʟ 😎)\n>\n"
-            f"> Fᴏʀ Pᴜʙʟɪᴄ Cʜᴀɴɴᴇʟ Jᴜsᴛ Sᴇɴᴅ Tʜᴇ Lɪɴᴋ Oғ Tʜᴇ Pᴏsᴛ & Fᴏʀ Pʀɪᴠᴀᴛᴇ Cʜᴀɴɴᴇʟ Usᴇ /login Fɪʀsᴛ 🔑"
+            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! !! Welcome Aboard ❞</i></b>\n\n"
+            f"<b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎) ❞</i></b>\n\n"
+            f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
         )
          
-        # Abhi sirf text jaayega kyunki image hatane ko bola tha
+        # Abhi ke liye Text Message bhejega 
         await message.reply_text(
             text=caption,
-            reply_markup=keyboard
+            reply_markup=keyboard,
+            parse_mode=ParseMode.HTML
         )
 
         # -------------------------------------------------------------
-        # JAB BHI IMAGE ADD KARNI HO, UPAR WALA "reply_text" DELETE 
-        # KARKE NICHE WALA "reply_photo" UNCOMMENT (ENABLE) KAR DENA:
+        # JAB PHOTO ADD KARNI HO TOH UPAR WALA "reply_text" COMMENT KARKE 
+        # NICHE WALA "reply_photo" UNCOMMENT KAR DENA:
         # -------------------------------------------------------------
         
         # await message.reply_photo(
         #     photo=image_url,
         #     caption=caption,
-        #     reply_markup=keyboard
+        #     reply_markup=keyboard,
+        #     parse_mode=ParseMode.HTML
         # )
         
         return  
