@@ -58,7 +58,7 @@ async def token_handler(client, message):
     """Handle the /token command."""
     
     # Random Auto-reaction BIG animation ke sath
-    emojis = ["🥰", "🥳", "🎉", "🔥", "👻", "🌚", "👀", "⚡", "🤧"]
+    emojis = ["🥰", "🥳", "🎉", "🔥", "👻", "🌚", "👀", "⚡", "🤧","😱","😘","🥴","😈",🤩"]
     try:
         await client.send_reaction(
             chat_id=message.chat.id, 
@@ -124,7 +124,7 @@ async def token_handler(client, message):
     param = message.command[1] if len(message.command) > 1 else None
     freecheck = await chk_user(message, user_id)
     if freecheck != 1:
-        await message.reply("You are a premium user no need of token 😉")
+        await message.reply("<i>You are a premium user no need of token 😉</i>")
         return
  
     if param:
@@ -148,7 +148,7 @@ async def smart_handler(client, message):
      
     freecheck = await chk_user(message, user_id)
     if freecheck != 1:
-        await message.reply("You are a premium user no need of token 😉")
+        await message.reply("<i>You are a premium user no need of token 😉</i>")
         return
     if await is_user_verified(user_id):
         await message.reply("✅ Your free session is already active enjoy!")
