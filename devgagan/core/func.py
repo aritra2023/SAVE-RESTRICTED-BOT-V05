@@ -35,32 +35,55 @@ async def gen_link(app,chat_id):
    return link
 
 async def subscribe(app, message):
-   update_channel = CHANNEL_ID
-   url = await gen_link(app, update_channel)
-   
-   force_link = "https://t.me/+BUF3hu-cKn00Y2Q1"
-   
-   if update_channel:
-      try:
-         user = await app.get_chat_member(update_channel, message.from_user.id)
-         if user.status == "kicked":
-            await message.reply_text("You are Banned. Contact -- @devgaganin")
-            return 1
-      except UserNotParticipant:
-        caption = f"Join our channel to use the bot"
+    # Dono force channels yahan add kar diye gaye hain
+    update_channels = [-1004443016082, -1004298619601]
+    
+    # Links dynamically export honge
+    links = []
+    for chat_id in update_channels:
+        try:
+            link = await app.export_chat_invite_link(chat_id)
+            links.append(link)
+        except Exception:
+            # Agar bot admin nahi hai toh fail-safe link
+            links.append("https://t.me/itzishan")
+
+    not_joined = False
+    
+    for chat_id in update_channels:
+        try:
+            user = await app.get_chat_member(chat_id, message.from_user.id)
+            if user.status in [enums.ChatMemberStatus.BANNED, enums.ChatMemberStatus.RESTRICTED]:
+                await message.reply_text("You are Banned. Contact -- @devgaganin")
+                return 1
+        except UserNotParticipant:
+            not_joined = True
+            break
+        except Exception as e:
+            # Bug Fix: Error aane par bhi theek se handle hoga, stuck nahi hoga
+            print(f"Force Sub check failed for {chat_id}: {e}")
+            not_joined = True
+            break
+
+    if not_joined:
+        # Custom Bold aur Italic text HTML format mein
+        caption = "<b>⊘ Access Denied!</b>\n\n<b><i>To use this bot, you must join our updates channel and group first.</i></b>"
+        
+        # Dono buttons ek hi row (bagal-bagal) mein set kar diye hain
         keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("Join Channel 1", url=force_link)],
-            [InlineKeyboardButton("Join Channel 2", url=force_link)]
+            [
+                InlineKeyboardButton("Join Channel 1", url=links[0]),
+                InlineKeyboardButton("Join Channel 2", url=links[1])
+            ]
         ])
         await message.reply_photo(
-            photo="https://graph.org/file/d44f024a08ded19452152.jpg",
+            photo="https://telegra.ph/file/e5ef835d0d3bd3bde573a-67046e40dd457fbe1b.jpg",
             caption=caption, 
-            reply_markup=keyboard
+            reply_markup=keyboard,
+            parse_mode=enums.ParseMode.HTML
         )
         return 1
-      except Exception:
-         await message.reply_text("Something Went Wrong. Check if Bot is Admin in CHANNEL_ID.")
-         return 1
+    return 0
 
 async def get_seconds(time_string):
     def extract_value_and_unit(ts):
@@ -327,3 +350,4 @@ async def prog_bar(current, total, ud_type, message, start):
             )             
         except:
             pass
+            
