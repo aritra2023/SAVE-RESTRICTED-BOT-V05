@@ -24,29 +24,22 @@ from datetime import datetime, timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGO_DB, WEBSITE_URL, AD_API, LOG_GROUP  
  
- 
 tclient = AsyncIOMotorClient(MONGO_DB)
 tdb = tclient["telegram_bot"]
 token = tdb["tokens"]
  
- 
 async def create_ttl_index():
     await token.create_index("expires_at", expireAfterSeconds=0)
  
- 
- 
 Param = {}
- 
  
 async def generate_random_param(length=8):
     """Generate a random parameter."""
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
  
- 
 async def get_shortened_url(deep_link):
     api_url = f"https://{WEBSITE_URL}/api?api={AD_API}&url={deep_link}"
  
-     
     async with aiohttp.ClientSession() as session:
         async with session.get(api_url) as response:
             if response.status == 200:
@@ -55,12 +48,10 @@ async def get_shortened_url(deep_link):
                     return data.get("shortenedUrl")
     return None
  
- 
 async def is_user_verified(user_id):
     """Check if a user has an active session."""
     session = await token.find_one({"user_id": user_id})
     return session is not None
- 
  
 @app.on_message(filters.command("start"))
 async def token_handler(client, message):
@@ -80,7 +71,7 @@ async def token_handler(client, message):
     first_name = message.from_user.first_name if message.from_user else "User"
 
     if len(message.command) <= 1:
-        # LDKI WALI IMAGE (Updated as per your link)
+        # Ladki wali image
         image_url = "https://files.catbox.moe/fros5e.jpg" 
         
         keyboard = InlineKeyboardMarkup([
@@ -94,17 +85,26 @@ async def token_handler(client, message):
             ]
         ])
          
+        # Perfect blockquote style jaisa screenshot mein hai
         caption = (
-            f"> _Yoo {first_name} !! !! Welcome Aboard 🥂_\n>\n"
-            "> _I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎)_\n>\n"
-            "> _For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑_"
+            f"<blockquote><b><i>Yoo {first_name} !! !! Welcome Aboard 🥂</i></b>\n\n"
+            f"<b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎)</i></b>\n\n"
+            f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
         )
          
-        await message.reply_photo(
-            photo=image_url,
-            caption=caption,
-            reply_markup=keyboard
-        )
+        try:
+            # Agar URL load ho gaya toh image bhejega
+            await message.reply_photo(
+                photo=image_url,
+                caption=caption,
+                reply_markup=keyboard
+            )
+        except Exception as e:
+            # Agar Koyeb ne Catbox URL block kar diya toh fail nahi hoga, text bhej dega
+            await message.reply_text(
+                text=f"⚠️ (Server failed to load image URL. Please upload the image to Telegram and use file_id instead)\n\n{caption}",
+                reply_markup=keyboard
+            )
         return  
  
     param = message.command[1] if len(message.command) > 1 else None
@@ -113,10 +113,8 @@ async def token_handler(client, message):
         await message.reply("You are a premium user no need of token 😉")
         return
  
-     
     if param:
         if user_id in Param and Param[user_id] == param:
-             
             await token.insert_one({
                 "user_id": user_id,
                 "param": param,
@@ -141,20 +139,16 @@ async def smart_handler(client, message):
     if await is_user_verified(user_id):
         await message.reply("✅ Your free session is already active enjoy!")
     else:
-         
         param = await generate_random_param()
         Param[user_id] = param   
  
-         
         deep_link = f"https://t.me/{client.me.username}?start={param}"
  
-         
         shortened_url = await get_shortened_url(deep_link)
         if not shortened_url:
             await message.reply("❌ Failed to generate the token link. Please try again.")
             return
  
-         
         button = InlineKeyboardMarkup(
             [[InlineKeyboardButton("Verify the token now...", url=shortened_url)]]
         )
