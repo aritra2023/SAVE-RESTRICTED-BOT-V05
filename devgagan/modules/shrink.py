@@ -15,7 +15,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 import random
-import requests
 import string
 import aiohttp
 from devgagan import app
@@ -57,9 +56,9 @@ async def is_user_verified(user_id):
 async def token_handler(client, message):
     """Handle the /token command."""
     
-    # Auto-reaction on start message
+    # Auto-reaction BIG animation ke sath
     try:
-        await client.send_reaction(chat_id=message.chat.id, message_id=message.id, emoji="🥰")
+        await client.send_reaction(chat_id=message.chat.id, message_id=message.id, emoji="🥰", big=True)
     except:
         pass
 
@@ -71,40 +70,46 @@ async def token_handler(client, message):
     first_name = message.from_user.first_name if message.from_user else "User"
 
     if len(message.command) <= 1:
-        # Ladki wali image
-        image_url = "https://files.catbox.moe/fros5e.jpg" 
         
+        # NOTE: Jab image lagani ho, toh is 'image_url' ko uncomment kar dena aur link daal dena
+        # image_url = "https://files.catbox.moe/fros5e.jpg" 
+        
+        # Dark Plan Font for Buttons
         keyboard = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("DEVELOPER 👨‍💻", url="https://t.me/itzishan"), 
-                InlineKeyboardButton("UPDATES 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
+                InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
+                InlineKeyboardButton("Uᴘᴅᴀᴛᴇs 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
             ],
             [
-                InlineKeyboardButton("Help", callback_data="help"), 
-                InlineKeyboardButton("ABOUT ME 😎", callback_data="about") 
+                InlineKeyboardButton("Hᴇʟᴘ", callback_data="help"), 
+                InlineKeyboardButton("Aʙᴏᴜᴛ Mᴇ 😎", callback_data="about") 
             ]
         ])
          
-        # Perfect blockquote style jaisa screenshot mein hai
+        # Native Telegram Blockquote + Dark Plan Font
         caption = (
-            f"<blockquote><b><i>Yoo {first_name} !! !! Welcome Aboard 🥂</i></b>\n\n"
-            f"<b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎)</i></b>\n\n"
-            f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
+            f"> Yᴏᴏ {first_name} !! !! Wᴇʟᴄᴏᴍᴇ Aʙᴏᴀʀᴅ 🥂\n>\n"
+            f"> I Cᴀɴ Sᴀᴠᴇ Pᴏsᴛs Fʀᴏᴍ Cʜᴀɴɴᴇʟs ᴏʀ Gʀᴏᴜᴘs Eᴠᴇɴ Wʜᴇɴ Fᴏʀᴡᴀʀᴅɪɴɢ ɪs Dɪsᴀʙʟᴇᴅ (Yᴇᴘ, I'ᴍ Tʜᴀᴛ Pᴏᴡᴇʀғᴜʟ 😎)\n>\n"
+            f"> Fᴏʀ Pᴜʙʟɪᴄ Cʜᴀɴɴᴇʟ Jᴜsᴛ Sᴇɴᴅ Tʜᴇ Lɪɴᴋ Oғ Tʜᴇ Pᴏsᴛ & Fᴏʀ Pʀɪᴠᴀᴛᴇ Cʜᴀɴɴᴇʟ Usᴇ /login Fɪʀsᴛ 🔑"
         )
          
-        try:
-            # Agar URL load ho gaya toh image bhejega
-            await message.reply_photo(
-                photo=image_url,
-                caption=caption,
-                reply_markup=keyboard
-            )
-        except Exception as e:
-            # Agar Koyeb ne Catbox URL block kar diya toh fail nahi hoga, text bhej dega
-            await message.reply_text(
-                text=f"⚠️ (Server failed to load image URL. Please upload the image to Telegram and use file_id instead)\n\n{caption}",
-                reply_markup=keyboard
-            )
+        # Abhi sirf text jaayega kyunki image hatane ko bola tha
+        await message.reply_text(
+            text=caption,
+            reply_markup=keyboard
+        )
+
+        # -------------------------------------------------------------
+        # JAB BHI IMAGE ADD KARNI HO, UPAR WALA "reply_text" DELETE 
+        # KARKE NICHE WALA "reply_photo" UNCOMMENT (ENABLE) KAR DENA:
+        # -------------------------------------------------------------
+        
+        # await message.reply_photo(
+        #     photo=image_url,
+        #     caption=caption,
+        #     reply_markup=keyboard
+        # )
+        
         return  
  
     param = message.command[1] if len(message.command) > 1 else None
