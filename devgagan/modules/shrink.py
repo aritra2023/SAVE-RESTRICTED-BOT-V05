@@ -12,6 +12,7 @@
 # License: MIT License
 # ---------------------------------------------------
 
+import asyncio
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram.enums import ParseMode
@@ -57,8 +58,8 @@ async def is_user_verified(user_id):
 async def token_handler(client, message):
     """Handle the /token command."""
     
-    # Random Auto-reaction BIG animation ke sath
-    emojis = ["🥰", "🥳", "🎉", "🔥", "👻", "🌚", "👀", "⚡", "🤧","😱","😘","🥴","😈",🤩"]
+    # 1. Reaction (Fixed Emojis to prevent reaction failure)
+    emojis = ["👍", "❤️", "🔥", "🥰", "👏", "🎉", "🤩", "⚡", "🏆", "💯"]
     try:
         await client.send_reaction(
             chat_id=message.chat.id, 
@@ -66,7 +67,7 @@ async def token_handler(client, message):
             emoji=random.choice(emojis), 
             big=True
         )
-    except:
+    except Exception:
         pass
 
     join = await subscribe(client, message)
@@ -78,10 +79,18 @@ async def token_handler(client, message):
 
     if len(message.command) <= 1:
         
-        # NOTE: Jab image lagani ho, toh is 'image_url' ko uncomment kar dena
-        # image_url = "https://files.catbox.moe/fros5e.jpg" 
+        # 2. Send Animated Sticker, wait for animation, then delete
+        sticker_id = "CAACAgQAAxkBAAER7Q5qsE6CAhymkJ2_sYeatX95zbmNgwAC9RMAApOzKVKucQpUKqNOgz0E"
+        try:
+            sticker_msg = await client.send_sticker(chat_id=user_id, sticker=sticker_id)
+            await asyncio.sleep(2.5) # Wait for animation to finish
+            await sticker_msg.delete()
+        except Exception:
+            pass # Ignore if any error occurs with sticker
+            
+        # 3. Main Welcome Message
+        image_url = "https://telegra.ph/file/4275f49171b91a3e54846-ba3061bfeca029f934.jpg" 
         
-        # Dark Plan Font ONLY for Buttons
         keyboard = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
@@ -93,32 +102,46 @@ async def token_handler(client, message):
             ]
         ])
          
-        # HTML Formatting for exact screenshot matching (Bold + Italic + Mentions + Quotes)
+        # HTML tag properly nested to prevent parse errors
         caption = (
-            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! Welcome Aboard </blockquote></i></b>\n"
+            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! Welcome Aboard</i></b></blockquote>\n"
             f"<blockquote><b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎) </i></b>\n\n"
             f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
         )
          
-        # Abhi ke liye Text Message bhejega 
-        await message.reply_text(
-            text=caption,
-            reply_markup=keyboard,
-            parse_mode=ParseMode.HTML
-        )
-
-        # -------------------------------------------------------------
-        # JAB PHOTO ADD KARNI HO TOH UPAR WALA "reply_text" COMMENT KARKE 
-        # NICHE WALA "reply_photo" UNCOMMENT KAR DENA:
-        # -------------------------------------------------------------
-        
-        # await message.reply_photo(
-        #     photo=image_url,
-        #     caption=caption,
-        #     reply_markup=keyboard,
-        #     parse_mode=ParseMode.HTML
-        # )
-        
+        # Photo sending block with fallback mechanisms
+        try:
+            # Full screen 🎉 animation (effect_id) + Image
+            await message.reply_photo(
+                photo=image_url,
+                caption=caption,
+                reply_markup=keyboard,
+                parse_mode=ParseMode.HTML,
+                effect_id="5046509860389126442"
+            )
+        except TypeError:
+            # Fallback agar tumhara Pyrogram ka version purana hai aur effect_id support nahi karta
+            try:
+                await message.reply_photo(
+                    photo=image_url,
+                    caption=caption,
+                    reply_markup=keyboard,
+                    parse_mode=ParseMode.HTML
+                )
+            except Exception:
+                # Fallback agar image load/download nahi hoti
+                await message.reply_text(
+                    text=caption,
+                    reply_markup=keyboard,
+                    parse_mode=ParseMode.HTML
+                )
+        except Exception:
+            # Sabse aakhiri fallback taaki bot crash na ho
+            await message.reply_text(
+                text=caption,
+                reply_markup=keyboard,
+                parse_mode=ParseMode.HTML
+            )
         return  
  
     param = message.command[1] if len(message.command) > 1 else None
