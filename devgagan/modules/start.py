@@ -119,8 +119,8 @@ async def send_or_edit_help_page(_, message, page_number):
         return
  
      
-    prev_button = InlineKeyboardButton("◀️ Previous", callback_data=f"help_prev_{page_number}")
-    next_button = InlineKeyboardButton("Next ▶️", callback_data=f"help_next_{page_number}")
+    prev_button = InlineKeyboardButton("◀️ Pʀᴇᴠɪᴏᴜs", callback_data=f"help_prev_{page_number}")
+    next_button = InlineKeyboardButton("Nᴇxᴛ ▶️", callback_data=f"help_next_{page_number}")
  
      
     buttons = []
@@ -174,16 +174,22 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 @app.on_message(filters.command("terms") & filters.private)
 async def terms(client, message):
     terms_text = (
-        "> 📜 **Terms and Conditions** 📜\n\n"
-        "✨ We are not responsible for user deeds, and we do not promote copyrighted content. If any user engages in such activities, it is solely their responsibility.\n"
-        "✨ Upon purchase, we do not guarantee the uptime, downtime, or the validity of the plan. __Authorization and banning of users are at our discretion; we reserve the right to ban or authorize users at any time.__\n"
-        "✨ Payment to us **__does not guarantee__** authorization for the /batch command. All decisions regarding authorization are made at our discretion and mood.\n"
+        "> 📜 **__TERMS & CONDITIONS__**\n"
+        "__Users Are Solely Responsible For Their Actions And Content. The Service Does Not Promote Or Support Copyrighted Or Illegal Activity.__\n\n"
+        "> **__Service Availability__**\n"
+        "__Purchase Of Any Plan Does Not Guarantee Service Availability, Uptime, Or Continuity. The Service May Be Modified Or Discontinued At Any Time Without Notice.__\n\n"
+        "> **__Authorization & Access Control__**\n"
+        "__User Access, Authorization, Or Banning Is Entirely At The Service Provider’s Discretion.__\n\n"
+        "> **__Payments & Feature Access__**\n"
+        "__Payment Does Not Guarantee Access To Any Feature, Including The /Batch Command. All decisions regarding authorization are made by our mood.__\n\n"
+        "> **__No Right of Claim__**\n"
+        "__No Refunds, Compensation, Or Claims May Be Made For Denied Access, Service Interruptions, Or Account Restrictions.__\n"
     )
      
     buttons = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("📋 See Plans", callback_data="see_plan")],
-            [InlineKeyboardButton("💬 Contact Now", url="https://t.me/kingofpatal")],
+            [InlineKeyboardButton("📋 Sᴇᴇ Pʟᴀɴs", callback_data="see_plan")],
+            [InlineKeyboardButton("💬 Cᴏɴᴛᴀᴄᴛ Nᴏᴡ", url="https://t.me/itzishan")],
         ]
     )
     await message.reply_text(terms_text, reply_markup=buttons)
@@ -192,17 +198,22 @@ async def terms(client, message):
 @app.on_message(filters.command("plan") & filters.private)
 async def plan(client, message):
     plan_text = (
-        "> 💰 **Premium Price**:\n\n Starting from $2 or 200 INR accepted via **__Amazon Gift Card__** (terms and conditions apply).\n"
-        "📥 **Download Limit**: Users can download up to 100,000 files in a single batch command.\n"
-        "🛑 **Batch**: You will get two modes /bulk and /batch.\n"
-        "   - Users are advised to wait for the process to automatically cancel before proceeding with any downloads or uploads.\n\n"
-        "📜 **Terms and Conditions**: For further details and complete terms and conditions, please send /terms.\n"
+        "> 💳 **__Premium Plan__**\n"
+        "__Our Plan Start from 4$ or 350₹ and can be accepted via Google Pay, PhonePe or PayPal. ( Terms & Conditions applied )__\n\n"
+        "> 📥 **__Download Limit__**\n"
+        "__Users can download up to 10,000 files in a single batch command.__\n\n"
+        "> 📦 **__Batch Command__**\n"
+        "__You will get /batch command unlocked for your bulk files extraction.__\n\n"
+        "> ♻️ **__Keep Patience__**\n"
+        "__Users are advised to wait for the process to automatically cancel before proceeding with any downloads or uploads.__\n\n"
+        "> 📜 **__Terms & Conditions__**\n"
+        "__For further details and to read our terms and conditions, send /terms or click See Terms below ⬇️__\n"
     )
      
     buttons = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("📜 See Terms", callback_data="see_terms")],
-            [InlineKeyboardButton("💬 Contact Now", url="https://t.me/kingofpatal")],
+            [InlineKeyboardButton("📜 Sᴇᴇ Tᴇʀᴍs", callback_data="see_terms")],
+            [InlineKeyboardButton("💬 Cᴏɴᴛᴀᴄᴛ Nᴏᴡ", url="https://t.me/itzishan")],
         ]
     )
     await message.reply_text(plan_text, reply_markup=buttons)
@@ -211,17 +222,22 @@ async def plan(client, message):
 @app.on_callback_query(filters.regex("see_plan"))
 async def see_plan(client, callback_query):
     plan_text = (
-        "> 💰**Premium Price**\n\n Starting from $2 or 200 INR accepted via **__Amazon Gift Card__** (terms and conditions apply).\n"
-        "📥 **Download Limit**: Users can download up to 100,000 files in a single batch command.\n"
-        "🛑 **Batch**: You will get two modes /bulk and /batch.\n"
-        "   - Users are advised to wait for the process to automatically cancel before proceeding with any downloads or uploads.\n\n"
-        "📜 **Terms and Conditions**: For further details and complete terms and conditions, please send /terms or click See Terms👇\n"
+        "> 💳 **__Premium Plan__**\n"
+        "__Our Plan Start from 2$ to 200₹ and can be accepted via Google Pay, PhonePe or PayPal. ( Terms & Conditions applied )__\n\n"
+        "> 📥 **__Download Limit__**\n"
+        "__Users can download up to 10,000 files in a single batch command.__\n\n"
+        "> 📦 **__Batch Command__**\n"
+        "__You will get /batch command unlocked for your bulk files extraction.__\n\n"
+        "> ♻️ **__Keep Patience__**\n"
+        "__Users are advised to wait for the process to automatically cancel before proceeding with any downloads or uploads.__\n\n"
+        "> 📜 **__Terms & Conditions__**\n"
+        "__For further details and to read our terms and conditions, send /terms or click See Terms below __\n"
     )
      
     buttons = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("📜 See Terms", callback_data="see_terms")],
-            [InlineKeyboardButton("💬 Contact Now", url="https://t.me/kingofpatal")],
+            [InlineKeyboardButton("📜 Sᴇᴇ Tᴇʀᴍs", callback_data="see_terms")],
+            [InlineKeyboardButton("💬 Cᴏɴᴛᴀᴄᴛ Nᴏᴡ", url="https://t.me/itzishan")],
         ]
     )
     await callback_query.message.edit_text(plan_text, reply_markup=buttons)
@@ -230,18 +246,22 @@ async def see_plan(client, callback_query):
 @app.on_callback_query(filters.regex("see_terms"))
 async def see_terms(client, callback_query):
     terms_text = (
-        "> 📜 **Terms and Conditions** 📜\n\n"
-        "✨ We are not responsible for user deeds, and we do not promote copyrighted content. If any user engages in such activities, it is solely their responsibility.\n"
-        "✨ Upon purchase, we do not guarantee the uptime, downtime, or the validity of the plan. __Authorization and banning of users are at our discretion; we reserve the right to ban or authorize users at any time.__\n"
-        "✨ Payment to us **__does not guarantee__** authorization for the /batch command. All decisions regarding authorization are made at our discretion and mood.\n"
+        "> 📜 **__TERMS & CONDITIONS__**\n"
+        "__Users Are Solely Responsible For Their Actions And Content. The Service Does Not Promote Or Support Copyrighted Or Illegal Activity.__\n\n"
+        "> **__Service Availability__**\n"
+        "__Purchase Of Any Plan Does Not Guarantee Service Availability, Uptime, Or Continuity. The Service May Be Modified Or Discontinued At Any Time Without Notice.__\n\n"
+        "> **__Authorization & Access Control__**\n"
+        "__User Access, Authorization, Or Banning Is Entirely At The Service Provider’s Discretion.__\n\n"
+        "> **__Payments & Feature Access__**\n"
+        "__Payment Does Not Guarantee Access To Any Feature, Including The /Batch Command. All decisions regarding authorization are made by our mood.__\n\n"
+        "> **__No Right of Claim__**\n"
+        "__No Refunds, Compensation, Or Claims May Be Made For Denied Access, Service Interruptions, Or Account Restrictions.__\n"
     )
      
     buttons = InlineKeyboardMarkup(
         [
-            [InlineKeyboardButton("📋 See Plans", callback_data="see_plan")],
-            [InlineKeyboardButton("💬 Contact Now", url="https://t.me/kingofpatal")],
+            [InlineKeyboardButton("📋 Sᴇᴇ Pʟᴀɴs", callback_data="see_plan")],
+            [InlineKeyboardButton("💬 Cᴏɴᴛᴀᴄᴛ Nᴏᴡ", url="https://t.me/itzishan")],
         ]
     )
     await callback_query.message.edit_text(terms_text, reply_markup=buttons)
- 
- 
