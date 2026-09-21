@@ -14,7 +14,7 @@
 
 import asyncio
 from pyrogram import Client, filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from pyrogram.enums import ParseMode
 import random
 import string
@@ -58,7 +58,6 @@ async def is_user_verified(user_id):
 async def token_handler(client, message):
     """Handle the /token command."""
     
-    # 1. Reaction (Removed 100 emoji)
     emojis = ["👍", "❤️", "🔥", "🥰", "👏", "🎉", "🤩", "⚡", "🏆"]
     try:
         await client.send_reaction(
@@ -79,26 +78,24 @@ async def token_handler(client, message):
 
     if len(message.command) <= 1:
         
-        # 2. Updated Animated Sticker ID
         sticker_id = "CAACAgQAAxkBAAER7RBqsFFqPO_VzQy0HKNQ9nJpl_VWcAACTBYAAtURSVGPuDSsezeyDz0E"
         try:
             sticker_msg = await client.send_sticker(chat_id=user_id, sticker=sticker_id)
-            await asyncio.sleep(1.3) # Updated to 1.3 seconds
+            await asyncio.sleep(1.0)
             await sticker_msg.delete()
         except Exception:
             pass 
             
-        # 3. Main Welcome Message
-        image_url = "https://telegra.ph/file/b674cc798aa559c547754-db44965cf20146e224.jpg" 
+        image_url = "https://telegra.ph/file/76f4eaf6ea1b69cc110d2-338c7b87a70a7356df.jpg" 
         
-        # 4. Help Button with callback_data="help"
+        # Help replaced by Premium Button
         keyboard = InlineKeyboardMarkup([
             [
                 InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
                 InlineKeyboardButton("Uᴘᴅᴀᴛᴇs 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
             ],
             [
-                InlineKeyboardButton("Hᴇʟᴘ", callback_data="help"), 
+                InlineKeyboardButton("Pʀᴇᴍɪᴜᴍ 💎", url="https://t.me/itzishan?text=I%20Want%20To%20Know%20More%20About%20This%20Plan%20%21%21"), 
                 InlineKeyboardButton("Aʙᴏᴜᴛ Mᴇ 😎", callback_data="about") 
             ]
         ])
@@ -110,7 +107,6 @@ async def token_handler(client, message):
         )
          
         try:
-            # Effect ID integer format mein pass kiya hai
             await message.reply_photo(
                 photo=image_url,
                 caption=caption,
@@ -141,9 +137,8 @@ async def token_handler(client, message):
         return  
  
     param = message.command[1] if len(message.command) > 1 else None
-    freecheck = await chk_user(message, user_id)
     
-    # 5. Bold + Italic Premium user msg
+    freecheck = await chk_user(message, user_id)
     if freecheck != 1:
         await message.reply("<b><i>You are a Premium User 😉\nSpecial person don't require a Token.</i></b>", parse_mode=ParseMode.HTML)
         return
@@ -157,10 +152,10 @@ async def token_handler(client, message):
                 "expires_at": datetime.utcnow() + timedelta(hours=3),
             })
             del Param[user_id]   
-            await message.reply("✅ You have been verified successfully! Enjoy your session for next 3 hours.")
+            await message.reply("<b><i>✅ You have been verified successfully!</i></b> <i>Enjoy your session for next 3 hours.</i>", parse_mode=ParseMode.HTML)
             return
         else:
-            await message.reply("❌ Invalid or expired verification link. Please generate a new token.")
+            await message.reply("<b><i>❌ Invalid or expired verification link.</i></b> <i>Please generate a new token.</i>", parse_mode=ParseMode.HTML)
             return
  
 @app.on_message(filters.command("token"))
@@ -168,14 +163,12 @@ async def smart_handler(client, message):
     user_id = message.chat.id
      
     freecheck = await chk_user(message, user_id)
-    
-    # 5. Bold + Italic Premium user msg
     if freecheck != 1:
         await message.reply("<b><i>You are a Premium User 😉\nSpecial person don't require a Token.</i></b>", parse_mode=ParseMode.HTML)
         return
         
     if await is_user_verified(user_id):
-        await message.reply("✅ Your free session is already active enjoy!")
+        await message.reply("<b><i>✅ Your free session is already active enjoy !!</i></b>", parse_mode=ParseMode.HTML)
     else:
         param = await generate_random_param()
         Param[user_id] = param   
@@ -184,10 +177,64 @@ async def smart_handler(client, message):
  
         shortened_url = await get_shortened_url(deep_link)
         if not shortened_url:
-            await message.reply("❌ Failed to generate the token link. Please try again.")
+            await message.reply("<b><i>❌ Failed to generate the token link. Please try again.</i></b>", parse_mode=ParseMode.HTML)
             return
  
         button = InlineKeyboardMarkup(
-            [[InlineKeyboardButton("Verify the token now...", url=shortened_url)]]
+            [[InlineKeyboardButton("Vᴇʀɪғʏ Nᴏᴡ...", url=shortened_url)]]
         )
-        await message.reply("Click the button below to verify your free access token: \n\n> What will you get ? \n1. No time bound upto 3 hours \n2. Batch command limit will be FreeLimit + 20 \n3. All functions unlocked", reply_markup=button)
+        
+        await message.reply(
+            "<i>Click the button below to verify your free access token:</i> \n\n"
+            "<blockquote><b><i>What will you get ?</i></b></blockquote>\n"
+            "<i>1. No time bound upto 3 hours \n"
+            "2. Batch command limit will be FreeLimit + 20 \n"
+            "3. All functions unlocked</i>", 
+            reply_markup=button,
+            parse_mode=ParseMode.HTML
+        ) 
+
+
+# --- Callback Handlers for About and Home ---
+@app.on_callback_query(filters.regex("about|home"))
+async def cb_handler(client, query):
+    user_id = query.from_user.id
+    first_name = query.from_user.first_name if query.from_user else "User"
+
+    if query.data == "home":
+        keyboard = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
+                InlineKeyboardButton("Uᴘᴅᴀᴛᴇs 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
+            ],
+            [
+                InlineKeyboardButton("Pʀᴇᴍɪᴜᴍ 💎", url="https://t.me/itzishan?text=I%20Want%20To%20Know%20More%20About%20This%20Plan%20%21%21"), 
+                InlineKeyboardButton("Aʙᴏᴜᴛ Mᴇ 😎", callback_data="about") 
+            ]
+        ])
+        caption = (
+            f"<blockquote><b><i>Yoo <a href='tg://user?id={user_id}'>{first_name}</a> !! Welcome Aboard</i></b></blockquote>\n"
+            f"<blockquote><b><i>I Can Save Posts From Channels or Groups Even When Forwarding is Disabled (Yep, I'm That Powerful 😎) </i></b>\n\n"
+            f"<b><i>For Public Channel Just Send the Link of the Post & For Private Channel Use /login First 🔑</i></b></blockquote>"
+        )
+        await query.message.edit_caption(caption=caption, reply_markup=keyboard, parse_mode=ParseMode.HTML)
+
+    elif query.data == "about":
+        bot_username = client.me.username if client.me else "itzishan_bot"
+        
+        # Changed right side to normal fonts but kept it italic + added bot username link
+        about_caption = (
+            "<blockquote><b>‣ ⁉️ 𝐌𝐘 𝐃𝐄𝐓𝐀𝐈𝐋𝐒 </b></blockquote>\n"
+            f"<blockquote><b><i>• Mʏ Nᴀᴍᴇ</i></b> : <a href='https://t.me/{bot_username}'><i>Save restricted content bot</i></a>\n"
+            f"<b><i>• Mʏ Bᴇsᴛ Fʀɪᴇɴᴅ</i></b> : <a href='tg://user?id={user_id}'><i>This Sweetie </i></a>\n"
+            "<b><i>• Dᴇᴠᴇʟᴏᴘᴇʀ</i></b> : <a href='https://t.me/itzishan'><i>ISHAN</i></a>\n"
+            "<b><i>• Lɪʙʀᴀʀʏ</i></b> : <a href='https://docs.pyrogram.org/'><i>Pyrogram</i></a>\n"
+            "<b><i>• Lᴀɴɢᴜᴀɢᴇ</i></b> : <a href='https://www.python.org/'><i>Python 3</i></a>\n"
+            "<b><i>• DᴀᴛᴀBᴀsᴇ</i></b> : <a href='https://www.mongodb.com/'><i>Mongo DB</i></a>\n"
+            "<b><i>• Bᴏᴛ Sᴇʀᴠᴇʀ</i></b> : <a href='https://www.oracle.com/cloud/'><i>VPS</i></a>\n"
+            "<b><i>• Bᴜɪʟᴅ Sᴛᴀᴛᴜs</i></b> : <i>v2.7.1 [Stable]</i></blockquote>"
+        )
+        back_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("⬅️ Bᴀᴄᴋ", callback_data="home")]
+        ])
+        await query.message.edit_caption(caption=about_caption, reply_markup=back_keyboard, parse_mode=ParseMode.HTML)
