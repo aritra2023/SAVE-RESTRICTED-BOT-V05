@@ -143,22 +143,22 @@ async def progress_bar(current, total, ud_type, message, start):
         else:
             clean_ud_type = "Uploading ..."
 
-        # Fixed Markdown for clickable progress bar
+        # Fixed Markdown for clickable progress bar with bold lines
         tmp = (
-            f"╭───────────⌬\n"
-            f"┟─[[  📥 **{clean_ud_type}**  ]]\n"
-            f"├────────⌬\n"
-            f"┟ [{progress}](https://t.me/itzishan)\n"
-            f"┟ **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
-            f"┟ **Bytes:** __{round(percentage, 2)}%__\n"
-            f"┟ **Speed:** __{humanbytes(speed)}/s__\n"
-            f"┖ **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
+            f"**╭───────────⌬**\n"
+            f"**┟─**[[  📥 **{clean_ud_type}**  ]]\n"
+            f"**├────────⌬**\n"
+            f"**┟** [{progress}](https://t.me/itzishan)\n"
+            f"**┟** **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
+            f"**┟** **Bytes:** __{round(percentage, 2)}%__\n"
+            f"**┟** **Speed:** __{humanbytes(speed)}/s__\n"
+            f"**┖** **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
         )
         try:
             await message.edit(
                 text=tmp,
                 disable_web_page_preview=True
-            )             
+            )            
         except:
             pass
 
@@ -274,7 +274,7 @@ async def screenshot(video, duration, sender):
     if os.path.isfile(out):
         return out
     else:
-        None  
+        return None  
 
 last_update_time = time.time()
 async def progress_callback(current, total, progress_message):
@@ -290,15 +290,15 @@ async def progress_callback(current, total, progress_message):
         current_mb = current / (1024 * 1024)  
         total_mb = total / (1024 * 1024)      
         
-        # Fixed Markdown for clickable progress bar
+        # Fixed Markdown for clickable progress bar with bold lines
         tmp = (
-            f"╭───────────────────⌬\n"
-            f"┟─[[  📥 **Uploading ...**  ]]\n"
-            f"├──────────────⌬\n"
-            f"┟ [{progress}](https://t.me/itzishan)\n"
-            f"┟ **Completed:** __{current_mb:.2f} MB/{total_mb:.2f} MB__\n"
-            f"┟ **Bytes:** __{percent:.2f}%__\n"
-            f"┖ **ETA:** __Calculating...__"
+            f"**╭───────────────────⌬**\n"
+            f"**┟─**[[  📥 **Uploading ...**  ]]\n"
+            f"**├──────────────⌬**\n"
+            f"**┟** [{progress}](https://t.me/itzishan)\n"
+            f"**┟** **Completed:** __{current_mb:.2f} MB/{total_mb:.2f} MB__\n"
+            f"**┟** **Bytes:** __{percent:.2f}%__\n"
+            f"**┖** **ETA:** __Calculating...__"
         )
         try:
             await progress_message.edit(
@@ -332,22 +332,21 @@ async def prog_bar(current, total, ud_type, message, start):
         else:
             clean_ud_type = "Uploading ..."
 
-        # Fixed Markdown for clickable progress bar
+        # Fixed Markdown for clickable progress bar with bold lines
         tmp = (
-            f"╭─────────────────⌬\n"
-            f"┟─[[  📥 **{clean_ud_type}**  ]]\n"
-            f"├──────────────⌬\n"
-            f"┟ [{progress}](https://t.me/itzishan)\n"
-            f"┟ **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
-            f"┟ **Bytes:** __{round(percentage, 2)}%__\n"
-            f"┟ **Speed:** __{humanbytes(speed)}/s__\n"
-            f"┖ **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
+            f"**╭─────────────────⌬**\n"
+            f"**┟─**[[  📥 **{clean_ud_type}**  ]]\n"
+            f"**├──────────────⌬**\n"
+            f"**┟** [{progress}](https://t.me/itzishan)\n"
+            f"**┟** **Completed:** __{humanbytes(current)}/{humanbytes(total)}__\n"
+            f"**┟** **Bytes:** __{round(percentage, 2)}%__\n"
+            f"**┟** **Speed:** __{humanbytes(speed)}/s__\n"
+            f"**┖** **ETA:** __{estimated_total_time if estimated_total_time != '' else '0 s'}__"
         )
         try:
             await message.edit_text(
                 text=tmp,
                 disable_web_page_preview=True
-            )             
+            )            
         except:
             pass
-            
