@@ -54,7 +54,7 @@ def get_readable_file_size(size_in_bytes) -> str:
 
 @gagan.on(events.NewMessage(incoming=True, pattern='/speedtest'))
 async def speedtest(event):
-    speed = await event.reply("Running Speed Test. Wait about some secs.")  #edit telethon
+    speed = await event.reply("**__🛜 Running Speed Test.\n💬 Please Wait About Few Seconds.__**")  #edit telethon
     test = Speedtest()
     test.get_best_server()
     test.download()
@@ -63,30 +63,31 @@ async def speedtest(event):
     result = test.results.dict()
     path = (result['share'])
     currentTime = get_readable_time(time() - botStartTime)
-    string_speed = f'''
-╭─《 🚀 SPEEDTEST INFO 》
-├ <b>Upload:</b> <code>{speed_convert(result['upload'], False)}</code>
-├ <b>Download:</b>  <code>{speed_convert(result['download'], False)}</code>
-├ <b>Ping:</b> <code>{result['ping']} ms</code>
-├ <b>Time:</b> <code>{result['timestamp']}</code>
-├ <b>Data Sent:</b> <code>{get_readable_file_size(int(result['bytes_sent']))}</code>
-╰ <b>Data Received:</b> <code>{get_readable_file_size(int(result['bytes_received']))}</code>
-╭─《 🌐 SPEEDTEST SERVER 》
-├ <b>Name:</b> <code>{result['server']['name']}</code>
-├ <b>Country:</b> <code>{result['server']['country']}, {result['server']['cc']}</code>
-├ <b>Sponsor:</b> <code>{result['server']['sponsor']}</code>
-├ <b>Latency:</b> <code>{result['server']['latency']}</code>
-├ <b>Latitude:</b> <code>{result['server']['lat']}</code>
-╰ <b>Longitude:</b> <code>{result['server']['lon']}</code>
-╭─《 👤 CLIENT DETAILS 》
-├ <b>IP Address:</b> <code>{result['client']['ip']}</code>
-├ <b>Latitude:</b> <code>{result['client']['lat']}</code>
-├ <b>Longitude:</b> <code>{result['client']['lon']}</code>
-├ <b>Country:</b> <code>{result['client']['country']}</code>
-├ <b>ISP:</b> <code>{result['client']['isp']}</code>
-├ <b>ISP Rating:</b> <code>{result['client']['isprating']}</code>
-╰ <b>Powered by Team SPY</b> 
-'''
+    string_speed = f'''<blockquote><b>⌬<i>  🚀 Speedtest Info</i></b></blockquote>
+├ <i>Upload: {speed_convert(result['upload'], False)}</i>
+├ <i>Download: {speed_convert(result['download'], False)}</i>
+├ <i>Ping: {result['ping']} ms</i>
+├ <i>Time: {result['timestamp']}</i>
+├ <i>Data Sent: {get_readable_file_size(int(result['bytes_sent']))}</i>
+└ <i>Data Received: {get_readable_file_size(int(result['bytes_received']))}</i>
+
+<blockquote><b>⌬<i> 🌐 Speedtest Server</i></b></blockquote>
+├ <i>Name: {result['server']['name']}</i>
+├ <i>Country: {result['server']['country']}, {result['server']['cc']}</i>
+├ <i>Sponsor: {result['server']['sponsor']}</i>
+├ <i>Latency: {result['server']['latency']}</i>
+├ <i>Latitude: {result['server']['lat']}</i>
+└ <i>Longitude: {result['server']['lon']}</i>
+
+<blockquote><b>⌬<i> 👤 Client Details</i></b></blockquote>
+├ <i>IP Address: {result['client']['ip']}</i>
+├ <i>Latitude: {result['client']['lat']}</i>
+├ <i>Longitude: {result['client']['lon']}</i>
+├ <i>Country: {result['client']['country']}</i>
+├ <i>ISP: {result['client']['isp']}</i>
+└ <i>ISP Rating: {result['client']['isprating']}</i>
+
+<blockquote><b><i>Powered by @Itzishan</i></b></blockquote>'''
     try:
         await event.reply(string_speed,file=path,parse_mode='html')
         await speed.delete()
