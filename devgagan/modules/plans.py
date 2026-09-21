@@ -33,27 +33,28 @@ async def remove_premium(client, message):
         
         if data and data.get("_id"):
             await plans_db.remove_premium(user_id)
-            await message.reply_text("ᴜꜱᴇʀ ʀᴇᴍᴏᴠᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ !")
+            await message.reply_text("**__User removed successfully!__**")
             await client.send_message(
                 chat_id=user_id,
-                text=f"<b>ʜᴇʏ {user.mention},\n\nʏᴏᴜʀ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇss ʜᴀs ʙᴇᴇɴ ʀᴇᴍᴏᴠᴇᴅ.\nᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴜsɪɴɢ ᴏᴜʀ sᴇʀᴠɪᴄᴇ 😊.</b>"
+                text=f"> **__ Hey [{user.first_name}](tg://user?id={user_id})!!__**\n\n**__Your premium access has been removed.__**\n**__Thank you for using our service 😊.__**\n\n**__To renew your plan, use__** /plan **__command.__**"
             )
         else:
-            await message.reply_text("ᴜɴᴀʙʟᴇ ᴛᴏ ʀᴇᴍᴏᴠᴇ ᴜꜱᴇᴅ !\nᴀʀᴇ ʏᴏᴜ ꜱᴜʀᴇ, ɪᴛ ᴡᴀꜱ ᴀ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀ ɪᴅ ?")
+            await message.reply_text("**__Unable to remove user!\nAre you sure, it was a premium user ID?__**")
     else:
-        await message.reply_text("ᴜꜱᴀɢᴇ : /rem user_id") 
+        await message.reply_text("**__Usage :__** `/rem user_id`") 
 
 
 
 @app.on_message(filters.command("myplan"))
 async def myplan(client, message):
     user_id = message.from_user.id
-    user = message.from_user.mention
+    user = message.from_user.first_name
     data = await plans_db.check_premium(user_id)  
     if data and data.get("expire_date"):
         expiry = data.get("expire_date")
         expiry_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
-        expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y\n⏱️ ᴇxᴘɪʀʏ ᴛɪᴍᴇ : %I:%M:%S %p")            
+        expiry_date = expiry_ist.strftime("%d-%m-%Y")
+        expiry_time = expiry_ist.strftime("%I:%M:%S %p")
         
         current_time = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
         time_left = expiry_ist - current_time
@@ -64,10 +65,17 @@ async def myplan(client, message):
         minutes, seconds = divmod(remainder, 60)
             
         
-        time_left_str = f"{days} ᴅᴀʏꜱ, {hours} ʜᴏᴜʀꜱ, {minutes} ᴍɪɴᴜᴛᴇꜱ"
-        await message.reply_text(f"⚜️ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀ ᴅᴀᴛᴀ :\n\n👤 ᴜꜱᴇʀ : {user}\n⚡ ᴜꜱᴇʀ ɪᴅ : <code>{user_id}</code>\n⏰ ᴛɪᴍᴇ ʟᴇꜰᴛ : {time_left_str}\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str_in_ist}")   
+        time_left_str = f"{days} days, {hours} hours, {minutes} minutes"
+        await message.reply_text(
+            f"**__⚜️ Premium User Data :__**\n\n"
+            f"**__👤 User__** : __[{user}](tg://user?id={user_id})__\n"
+            f"**__⚡ User ID__** : `{user_id}`\n"
+            f"**__⏰ Time Left__** : __{time_left_str}__\n"
+            f"**__⌛️ Expiry Date__** : __{expiry_date}__\n"
+            f"**__⏱️ Expiry Time__** : __{expiry_time}__"
+        )   
     else:
-        await message.reply_text(f"ʜᴇʏ {user},\n\nʏᴏᴜ ᴅᴏ ɴᴏᴛ ʜᴀᴠᴇ ᴀɴʏ ᴀᴄᴛɪᴠᴇ ᴘʀᴇᴍɪᴜᴍ ᴘʟᴀɴs")
+        await message.reply_text(f"**__Hey {user},\n\nYou do not have any active premium plans.__**")
         
 
 
@@ -80,7 +88,8 @@ async def get_premium(client, message):
         if data and data.get("expire_date"):
             expiry = data.get("expire_date") 
             expiry_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata"))
-            expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y\n⏱️ ᴇxᴘɪʀʏ ᴛɪᴍᴇ : %I:%M:%S %p")            
+            expiry_date = expiry_ist.strftime("%d-%m-%Y")
+            expiry_time = expiry_ist.strftime("%I:%M:%S %p")          
             
             current_time = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
             time_left = expiry_ist - current_time
@@ -92,38 +101,72 @@ async def get_premium(client, message):
             
             
             time_left_str = f"{days} days, {hours} hours, {minutes} minutes"
-            await message.reply_text(f"⚜️ ᴘʀᴇᴍɪᴜᴍ ᴜꜱᴇʀ ᴅᴀᴛᴀ :\n\n👤 ᴜꜱᴇʀ : {user.mention}\n⚡ ᴜꜱᴇʀ ɪᴅ : <code>{user_id}</code>\n⏰ ᴛɪᴍᴇ ʟᴇꜰᴛ : {time_left_str}\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str_in_ist}")
+            await message.reply_text(
+                f"**__⚜️ Premium User Data :__**\n\n"
+                f"**__👤 User__** : __[{user.first_name}](tg://user?id={user_id})__\n"
+                f"**__⚡ User ID__** : `{user_id}`\n"
+                f"**__⏰ Time Left__** : __{time_left_str}__\n"
+                f"**__⌛️ Expiry Date__** : __{expiry_date}__\n"
+                f"**__⏱️ Expiry Time__** : __{expiry_time}__"
+            )
         else:
-            await message.reply_text("ɴᴏ ᴀɴʏ ᴘʀᴇᴍɪᴜᴍ ᴅᴀᴛᴀ ᴏꜰ ᴛʜᴇ ᴡᴀꜱ ꜰᴏᴜɴᴅ ɪɴ ᴅᴀᴛᴀʙᴀꜱᴇ !")
+            await message.reply_text("**__No premium data for this user was found in the database!__**")
     else:
-        await message.reply_text("ᴜꜱᴀɢᴇ : /check user_id")
+        await message.reply_text("**__Usage :__** `/check user_id`")
 
 
 @app.on_message(filters.command("add") & filters.user(OWNER_ID))
 async def give_premium_cmd_handler(client, message):
     if len(message.command) == 4:
         time_zone = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
-        current_time = time_zone.strftime("%d-%m-%Y\n⏱️ ᴊᴏɪɴɪɴɢ ᴛɪᴍᴇ : %I:%M:%S %p") 
+        join_date = time_zone.strftime("%d-%m-%Y")
+        join_time = time_zone.strftime("%I:%M:%S %p")
+        
         user_id = int(message.command[1])
         user = await client.get_users(user_id)
         time = message.command[2]+" "+message.command[3]
         seconds = await get_seconds(time)
         if seconds > 0:
-            expiry_time = datetime.datetime.now() + datetime.timedelta(seconds=seconds)  
-            await plans_db.add_premium(user_id, expiry_time)  
+            expiry_time_delta = datetime.datetime.now() + datetime.timedelta(seconds=seconds)  
+            await plans_db.add_premium(user_id, expiry_time_delta)  
             data = await plans_db.check_premium(user_id)
             expiry = data.get("expire_date")   
-            expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y\n⏱️ ᴇxᴘɪʀʏ ᴛɪᴍᴇ : %I:%M:%S %p")         
-            await message.reply_text(f"ᴘʀᴇᴍɪᴜᴍ ᴀᴅᴅᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ✅\n\n👤 ᴜꜱᴇʀ : {user.mention}\n⚡ ᴜꜱᴇʀ ɪᴅ : <code>{user_id}</code>\n⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : <code>{time}</code>\n\n⏳ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ : {current_time}\n\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str_in_ist} \n\n__**Powered by Team SPY__**", disable_web_page_preview=True)
+            
+            expiry_date = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y")
+            expiry_time = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%I:%M:%S %p")
+            
+            await message.reply_text(
+                f"**__Premium added successfully ✅__**\n\n"
+                f"**__👤 User__** : __[{user.first_name}](tg://user?id={user_id})__\n"
+                f"**__⚡ User ID__** : `{user_id}`\n"
+                f"**__⏰ Premium Access__** : `{time}`\n\n"
+                f"**__⏳ Joining Date__** : __{join_date}__\n"
+                f"**__⏱️ Joining Time__** : __{join_time}__\n\n"
+                f"**__⌛️ Expiry Date__** : __{expiry_date}__\n"
+                f"**__⏱️ Expiry Time__** : __{expiry_time}__\n\n"
+                f"> **__Powered by @Itzishan__**", 
+                disable_web_page_preview=True
+            )
+            
             await client.send_message(
                 chat_id=user_id,
-                text=f"👋 ʜᴇʏ {user.mention},\nᴛʜᴀɴᴋ ʏᴏᴜ ꜰᴏʀ ᴘᴜʀᴄʜᴀꜱɪɴɢ ᴘʀᴇᴍɪᴜᴍ.\nᴇɴᴊᴏʏ !! ✨🎉\n\n⏰ ᴘʀᴇᴍɪᴜᴍ ᴀᴄᴄᴇꜱꜱ : <code>{time}</code>\n⏳ ᴊᴏɪɴɪɴɢ ᴅᴀᴛᴇ : {current_time}\n\n⌛️ ᴇxᴘɪʀʏ ᴅᴀᴛᴇ : {expiry_str_in_ist}", disable_web_page_preview=True              
+                text=(
+                    f"> **__ Hey [{user.first_name}](tg://user?id={user_id})!!__**\n\n"
+                    f"**__Thank you for purchasing premium.__**\n"
+                    f"**__Enjoy !! ✨🎉__**\n\n"
+                    f"**__⏰ Premium Access__** : `{time}`\n"
+                    f"**__⏳ Joining Date__** : __{join_date}__\n"
+                    f"**__⏱️ Joining Time__** : __{join_time}__\n\n"
+                    f"**__⌛️ Expiry Date__** : __{expiry_date}__\n"
+                    f"**__⏱️ Expiry Time__** : __{expiry_time}__"
+                ), 
+                disable_web_page_preview=True              
             )
                     
         else:
-            await message.reply_text("Invalid time format. Please use '1 day for days', '1 hour for hours', or '1 min for minutes', or '1 month for months' or '1 year for year'")
+            await message.reply_text("**__Invalid time format. Please use '1 day', '1 hour', '1 min', '1 month', or '1 year'.__**")
     else:
-        await message.reply_text("Usage : /add user_id time (e.g., '1 day for days', '1 hour for hours', or '1 min for minutes', or '1 month for months' or '1 year for year')")
+        await message.reply_text("**__Usage :__** `/add user_id time` **__(e.g., '1 day', '1 hour', '1 month', '1 year')__**")
 
 
 @app.on_message(filters.command("transfer"))
@@ -147,37 +190,41 @@ async def transfer_premium(client, message):
             await plans_db.add_premium(new_user_id, expiry)
             
             # Convert expiry date to IST format for display
-            expiry_str_in_ist = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime(
-                "%d-%m-%Y\n⏱️ **Expiry Time:** %I:%M:%S %p"
-            )
+            expiry_date = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%d-%m-%Y")
+            expiry_time = expiry.astimezone(pytz.timezone("Asia/Kolkata")).strftime("%I:%M:%S %p")
+            
             time_zone = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
-            current_time = time_zone.strftime("%d-%m-%Y\n⏱️ **Transfer Time:** %I:%M:%S %p")
+            current_date = time_zone.strftime("%d-%m-%Y")
+            current_time_str = time_zone.strftime("%I:%M:%S %p")
             
             # Confirmation message to the sender
             await message.reply_text(
-                f"✅ **Premium Plan Transferred Successfully!**\n\n"
-                f"👤 **From:** {sender_user.mention}\n"
-                f"👤 **To:** {new_user.mention}\n"
-                f"⏳ **Expiry Date:** {expiry_str_in_ist}\n\n"
-                f"__Powered by Team SPY__ 🚀"
+                f"✅ **__Premium Plan Transferred Successfully!__**\n\n"
+                f"**__👤 From__** : __[{sender_user.first_name}](tg://user?id={sender_user_id})__\n"
+                f"**__👤 To__** : __[{new_user.first_name}](tg://user?id={new_user_id})__\n"
+                f"**__⏳ Expiry Date__** : __{expiry_date}__\n"
+                f"**__⏱ Expiry Time__** : __{expiry_time}__\n\n"
+                f"> **__Powered by @Itzishan__**"
             )
             
             # Notification to the new user
             await client.send_message(
                 chat_id=new_user_id,
                 text=(
-                    f"👋 **Hey {new_user.mention},**\n\n"
-                    f"🎉 **Your Premium Plan has been Transferred!**\n"
-                    f"🛡️ **Transferred From:** {sender_user.mention}\n\n"
-                    f"⏳ **Expiry Date:** {expiry_str_in_ist}\n"
-                    f"📅 **Transferred On:** {current_time}\n\n"
-                    f"__Enjoy the Service!__ ✨"
+                    f"> **__ Hey [{new_user.first_name}](tg://user?id={new_user_id})!!__**\n\n"
+                    f"**__🎉 Your Premium Plan has been Transferred!__**\n"
+                    f"**__🛡️ Transferred From__** : __[{sender_user.first_name}](tg://user?id={sender_user_id})__\n\n"
+                    f"**__⏳ Expiry Date__** : __{expiry_date}__\n"
+                    f"**__⏱ Expiry Time__** : __{expiry_time}__\n"
+                    f"**__📅 Transferred On__** : __{current_date}__\n"
+                    f"**__⏱ Transfer Time__** : __{current_time_str}__\n\n"
+                    f"**__Enjoy the Service! ✨__**"
                 )
             )
         else:
-            await message.reply_text("⚠️ **You are not a Premium user!**\n\nOnly Premium users can transfer their plans.")
+            await message.reply_text("⚠️ **__You are not a Premium user!\n\nOnly Premium users can transfer their plans.__**")
     else:
-        await message.reply_text("⚠️ **Usage:** /transfer user_id\n\nReplace `user_id` with the new user's ID.")
+        await message.reply_text("⚠️ **__Usage :__** `/transfer user_id`\n\n**__Replace `user_id` with the new user's ID.__**")
 
 
 async def premium_remover():
@@ -196,7 +243,7 @@ async def premium_remover():
                 if expiry_date <= datetime.datetime.now():
                     name = user.first_name
                     await plans_db.remove_premium(user_id)
-                    await app.send_message(user_id, text=f"Hello {name}, your premium subscription has expired.")
+                    await app.send_message(user_id, text=f"**__Hello {name}, your premium subscription has expired.__**")
                     print(f"{name}, your premium subscription has expired.")
                     removed_users.append(f"{name} ({user_id})")
                 else:
@@ -234,9 +281,8 @@ async def refresh_users(_, message):
     removed_text = "\n".join(removed_users) if removed_users else "No users removed."
     not_removed_text = "\n".join(not_removed_users) if not_removed_users else "No users remaining with premium."
     summary = (
-        f"**Here is Summary...**\n\n"
-        f"> **Removed Users:**\n{removed_text}\n\n"
-        f"> **Not Removed Users:**\n{not_removed_text}"
+        f"**__Here is Summary...__**\n\n"
+        f"**__Removed Users:__**\n__{removed_text}__\n\n"
+        f"**__Not Removed Users:__**\n__{not_removed_text}__"
     )
     await message.reply(summary)
-    
