@@ -89,7 +89,7 @@ async def token_handler(client, message):
             pass 
             
         # 3. Main Welcome Message
-        image_url = "https://telegra.ph/file/4275f49171b91a3e54846-ba3061bfeca029f934.jpg" 
+        image_url = "https://telegra.ph/file/f17400233094a0c30eed5-f0abb76b30095dc40a.jpg" 
         
         # 4. Help Button with callback_data="help"
         keyboard = InlineKeyboardMarkup([
