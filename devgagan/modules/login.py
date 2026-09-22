@@ -3,9 +3,9 @@
 # Description: A Pyrogram bot for downloading files from Telegram channels or groups 
 #              and uploading them back to Telegram.
 # Author: Gagan
-# GitHub: [https://github.com/devgaganin/](https://github.com/devgaganin/)
-# Telegram: [https://t.me/team_spy_pro](https://t.me/team_spy_pro)
-# YouTube: [https://youtube.com/@dev_gagan](https://youtube.com/@dev_gagan)
+# GitHub: https://github.com/devgaganin/
+# Telegram: https://t.me/team_spy_pro
+# YouTube: https://youtube.com/@dev_gagan
 # Created: 2025-01-11
 # Last Modified: 2025-01-11
 # Version: 2.0.5
@@ -64,9 +64,9 @@ async def clear_db(client, message):
         pass
 
     if files_deleted:
-        await message.reply("✅ Your session data and files have been cleared from memory and disk.")
+        await message.reply("__✅ Your session data and files have been cleared from memory and disk.__")
     else:
-        await message.reply("✅ Logged out with flag -m")
+        await message.reply("__✅ Logged out with flag -m__")
         
     
 @app.on_message(filters.command("login"))
@@ -93,15 +93,15 @@ async def generate_session(_, message):
     try:
         code = await client.send_code(phone_number)
     except ApiIdInvalid:
-        await message.reply('❌ Invalid combination of API ID and API HASH. Please restart the session.')
+        await message.reply('__❌ Invalid combination of API ID and API HASH. Please restart the session.__')
         return
     except PhoneNumberInvalid:
-        await message.reply('❌ Invalid phone number. Please restart the session.')
+        await message.reply('__❌ Invalid phone number. Please restart the session.__')
         return
     try:
         otp_code = await _.ask(user_id, "__Please check for an OTP in your official Telegram account. Once received, enter the OTP in the following format:__ \n__If the OTP is__ `12345`__, please enter it as__ `1 2 3 4 5`__.__", filters=filters.text, timeout=600)
     except TimeoutError:
-        await message.reply('⏰ Time limit of 10 minutes exceeded. Please restart the session.')
+        await message.reply('__⏰ Time limit of 10 minutes exceeded. Please restart the session.__')
         return
     phone_code = otp_code.text.replace(" ", "")
     try:
@@ -111,13 +111,13 @@ async def generate_session(_, message):
         await message.reply('__❌ **Invalid OTP.** Please restart the session.__')
         return
     except PhoneCodeExpired:
-        await message.reply('❌ Expired OTP. Please restart the session.')
+        await message.reply('__❌ Expired OTP. Please restart the session.__')
         return
     except SessionPasswordNeeded:
         try:
             two_step_msg = await _.ask(user_id, '__Your account has **two-step** verification enabled. Please enter your password.__', filters=filters.text, timeout=300)
         except TimeoutError:
-            await message.reply('⏰ Time limit of 5 minutes exceeded. Please restart the session.')
+            await message.reply('__⏰ Time limit of 5 minutes exceeded. Please restart the session.__')
             return
         try:
             password = two_step_msg.text
