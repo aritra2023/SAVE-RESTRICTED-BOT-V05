@@ -91,7 +91,7 @@ async def token_handler(client, message):
         # Help replaced by Premium Button
         keyboard = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ <tg-emoji emoji-id="6019529817920117353">ðŸ–¥</tg-emoji>👨‍💻", url="https://t.me/itzishan"), 
+                InlineKeyboardButton("Dᴇᴠᴇʟᴏᴘᴇʀ 👨‍💻", url="https://t.me/itzishan"), 
                 InlineKeyboardButton("Uᴘᴅᴀᴛᴇs 🚨", url="https://t.me/+BUF3hu-cKn00Y2Q1")       
             ],
             [
